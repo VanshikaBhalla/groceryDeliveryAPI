@@ -18,4 +18,4 @@ Check it out [here](https://grocerydeliveryapi.onrender.com)
 
 ## Acknowledgements
 
-This project has been both challenging and rewarding, and I am grateful for the opportunity to enhance my skills in web development.
+This project has been both challenging and rewarding, and I am grateful for the opportunity to enhance my skills.
