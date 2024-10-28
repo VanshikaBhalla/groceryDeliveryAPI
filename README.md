@@ -28,4 +28,4 @@ These challenges have provided valuable lessons, and I look forward to addressin
 
 ## Acknowledgements
 
-This project has been both challenging and rewarding, and I am grateful for the opportunity to enhance my skills.
+After overcoming initial challenges, the application has been successfully deployed on Render, ensuring scalability to meet varying demands. This project has been both challenging and rewarding, and I am grateful for the learning opportunities the project provided.
