@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dainik Groceries</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Grocery Delivery Service</h1>
+        <nav>
+            <ul>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#cart">Cart</a></li>
+                <li><a href="#checkout">Checkout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container" id="searchProduct">
+            <h1>Product Search</h1>
+            <input type="text" id="search-key" placeholder="Search for products..." >
+            <button id="search-button">Search</button>
+            <button id="clear-search">Clear</button>
+            <div id="results"></div>
+        </div>
+        <section id="products">
+            <div id="product-list">
+        <h2>Our Products</h2>
+        <div class="product-list" id="product-list-container">
+            {% for category, items in grouped_products.items() %}
+                <h3>{{ category|capitalize }}</h3>
+                <div class="category-products">
+                    {% for product in items %}
+                        <div class="product">
+                            <h4>{{ product.ProductName }}</h4>
+                            <p>Price: {{ product.Price }}</p>
+                            <p>Rating: {{ product.Rating }}</p>
+                            <p>In Stock: {{ product.InStock }}</p>
+                            <button onclick="addToCart('{{product.ProductID}}')">Add to Cart</button>
+                        </div>
+                    <br>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+        </section>
+
+        <section id="cart">
+            <h2 id="cart-head">Your Cart</h2>
+            <div class="cart-list"></div>
+        </section>
+
+        <section id="checkout">
+            <h2>Checkout</h2>
+            <button id="checkout-btn">Place Order</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Vanshika Bhalla &hearts;</p>
+    </footer>
+
+    <script src="static/products.js"></script>
+</body>
+</html>

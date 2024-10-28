@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Admin Portal</h1>
+        <nav>
+            <ul>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#assign-delivery">Assign Delivery Partner</a></li>
+                <li><a href="#cancel-order">Cancel Order</a></li>
+                <li><a href="#product-management">Product Management</a></li>
+                <li><a href="#user-profile">User Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container" id="main-content">
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="admin-section">
+            <h2>Admin Dashboard</h2>
+            <div id="dashboard-stats"></div>
+        </div>
+
+        <!-- Assign Delivery Partner Section -->
+        <div id="assign-delivery" class="admin-section">
+            <h2>Assign Delivery Partner</h2>
+            <form id="assignDeliveryForm">
+                <label for="order-id-delivery">Order ID:</label>
+                <input type="text" id="order-id-delivery" required>
+                <label for="delivery-email">Delivery Personnel Email:</label>
+                <input type="email" id="delivery-email" required>
+                <button type="submit">Assign</button>
+                <button type="button" id="clear-assign-delivery" class="clear-btn">Clear</button>
+            </form>
+            <div id="assignDeliveryResult"></div>
+        </div>
+
+        <!-- Cancel Order Section -->
+        <div id="cancel-order" class="admin-section">
+            <h2>Cancel Order</h2>
+            <form id="cancelOrderForm">
+                <label for="order-id-cancel">Order ID:</label>
+                <input type="text" id="order-id-cancel" required>
+                <button type="submit">Cancel Order</button>
+                <button type="button" id="clear-cancel-order" class="clear-btn">Clear</button>
+            </form>
+            <div id="cancelOrderResult"></div>
+        </div>
+
+        <!-- Product Management Section -->
+        <div id="product-management" class="admin-section">
+            <h2>Product Management</h2>
+
+            <!-- Add Product Form -->
+            <h3>Add Product</h3>
+            <form id="addProductForm">
+                <label for="product-name">Product Name:</label>
+                <input type="text" id="product-name" required>
+                <label for="product-price">Price:</label>
+                <input type="number" id="product-price" required>
+                <label for="product-rating">Rating:</label>
+                <input type="number" id="product-rating" step="0.1" required>
+                <select id="product-category" required>
+                <option value="">Select Category</option>
+                <option value="hygiene">Hygiene</option>
+                <option value="fashion">Fashion & More</option>
+                    <option value="electronic">Electronics</option>
+                <option value="beverage">Beverages</option>
+                    <option value="snacks">Snacks</option>
+                <option value="other">Other</option>
+            </select>
+                <label for="product-count">In Stock:</label>
+                <input type="number" id="product-count" required>
+                <button type="submit">Add Product</button>
+                <button type="button" id="clear-add-product" class="clear-btn">Clear</button>
+            </form>
+
+            <!-- Update Product Price Form -->
+            <h3>Update Product Price</h3>
+            <form id="updatePriceForm">
+                <label for="product-id-price">Product ID:</label>
+                <input type="text" id="product-id-price" required>
+                <label for="new-price">New Price:</label>
+                <input type="number" id="new-price" required>
+                <button type="submit">Update Price</button>
+                <button type="button" id="clear-update-price" class="clear-btn">Clear</button>
+            </form>
+
+            <!-- Update Product Stock Count Form -->
+            <h3>Update Product Stock Count</h3>
+            <form id="updateCountForm">
+                <label for="product-id-count">Product ID:</label>
+                <input type="text" id="product-id-count" required>
+                <label for="new-count">New Stock Count:</label>
+                <input type="number" id="new-count" required>
+                <button type="submit">Update Count</button>
+                <button type="button" id="clear-update-count" class="clear-btn">Clear</button>
+            </form>
+
+            <!-- Delete Product Form -->
+            <h3>Delete Product</h3>
+            <form id="deleteProductForm">
+                <label for="product-id-delete">Product ID:</label>
+                <input type="text" id="product-id-delete" required>
+                <button type="submit">Delete Product</button>
+                <button type="button" id="clear-delete-product" class="clear-btn">Clear</button>
+            </form>
+        </div>
+
+        <div id="user-profile" class="admin-section">
+            <h2>User Profile</h2>
+            <form id="fetchProfileForm">
+                <label for="user-email">User Email:</label>
+                <input type="email" id="user-email" required>
+                <button type="submit">Fetch Profile</button>
+                <button type="button" id="clear-fetch-profile" class="clear-btn">Clear</button>
+            </form>
+            <div id="userProfileResult"></div>
+
+            <h3>Update User Profile</h3>
+            <form id="updateProfileForm">
+                <label for="update-email">User Email:</label>
+                <input type="email" id="update-email" required>
+                <label for="new-phone">New Phone Number:</label>
+                <input type="text" id="new-phone" required>
+                <button type="submit">Update Profile</button>
+                <button type="button" id="clear-update-profile" class="clear-btn">Clear</button>
+            </form>
+            <div id="updateProfileResult"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Admin Portal</p>
+    </footer>
+
+    <script src="static/admin.js"></script>
+</body>
+</html>

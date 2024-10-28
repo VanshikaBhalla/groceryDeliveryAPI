@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Order Management</h1>
+    </header>
+    <div class="register-container">
+        <div class="order-section">
+            <h2>Place Order</h2>
+            <form id="placeOrderForm">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <button type="submit">Place Order</button>
+                <button id="b2" class="clear-btn" type="button">Clear</button>
+            </form>
+            <div id="orderConfirmation" class="result"></div>
+        </div>
+    </div>
+    <div class="register-container">
+        <div class="order-section">
+            <h2>Payment Page</h2>
+            <form id="paymentForm">
+                <label for="orderId">Order ID:</label>
+                <input type="text" id="orderIdpay" name="orderId" required>
+                <label for="email">Email:</label>
+                <input type="email" id="emailpay" name="email" required>
+                <button id="b4" type="button">Pay Now</button>
+                <button id="clear-pay" type="button" class="clear-btn">Clear</button>
+            </form>
+            <div id="responseMessage"></div>
+        </div>
+    </div>
+
+    <div class="register-container">
+        <div class="order-section">
+            <h2>Verify Payment</h2>
+    <form id="verificationForm">
+        <label for="paymentId">Payment ID:</label>
+        <input type="text" id="paymentId" name="paymentId" required>
+        <label for="razorpayOrderId">Razorpay Order ID:</label>
+        <input type="text" id="razorpayOrderId" name="razorpayOrderId" required>
+        <button id="verifyButton" type="button">Verify Payment</button>
+        <button id="clear-verify" type="button" class="clear-btn">Clear</button>
+    </form>
+            <div id="verificationMessage"></div>
+        </div>
+    </div>
+
+
+    <div class="register-container">
+        <div class="order-section">
+            <h2>Track Order</h2>
+            <form id="trackOrderForm">
+                <label for="order-id">Order ID:</label>
+                <input type="text" id="order-id" name="order_id" required>
+                <button type="submit">Track Order</button>
+                <button id="b3" class="clear-btn" type="button">Clear</button>
+            </form>
+            <div id="trackOrder" class="result" ></div>
+        </div>
+    </div>
+
+    <div class="register-container">
+        <div class="order-details-section">
+            <h2>Order Details</h2>
+            <form id="getOrderDetailsForm">
+                <label for="orderId">Order ID:</label>
+                <input type="text" id="orderId" name="orderId" required>
+                <label for="detailsEmail">Email:</label>
+                <input type="email" id="detailsEmail" name="detailsEmail" required>
+                <button type="submit">Get Order Details</button>
+                <button id="b1" class="clear-btn" type="button">Clear</button>
+            </form>
+            <div id="orderDetails" class="result"></div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Vanshika Bhalla &hearts;</p>
+    </footer>
+    <script src="/static/checkout.js"></script>
+</body>
+</html>

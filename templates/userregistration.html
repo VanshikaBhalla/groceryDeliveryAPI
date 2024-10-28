@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration - Dainik Groceries</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="register-container">
+        <h2>Register for Dainik Groceries</h2>
+        <form id="registrationForm">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="tel" id="phone" placeholder="Phone" required>
+            <select id="role" required>
+                <option value="">Select Role</option>
+                <option value="customer">Customer</option>
+                <option value="delivery_personnel">Delivery Personnel</option>
+            </select>
+            <button type="button" onclick="registerUser()">Register</button>
+            <p id="message"></p>
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2024 Vanshika Bhalla &hearts;</p>
+    </footer>
+    <script src="/static/app.js"></script>
+</body>
+</html>

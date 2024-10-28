@@ -1,0 +1,28 @@
+<html>
+<body>
+<button id="rzp-button1">Pay Now</button>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "{{ data.skey }}",
+    "amount": "{{ data.amt * 100 }}",
+    "currency": "INR",
+    "name": "Dainik Groceries",
+    "description": "Test Transaction",
+    "order_id": "{{ data.orderId }}",
+    "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+</body>
+</html>

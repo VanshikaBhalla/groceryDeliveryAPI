@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Personnel Portal</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Delivery Personnel Portal</h1>
+    </header>
+
+    <div class="container" id="main-content">
+        <div id="update-delivery-status" class="delivery-section">
+    <h2>Update Delivery Status</h2>
+    <form id="updateStatusForm">
+        <label for="order-id-status">Order ID:</label>
+        <input type="text" id="order-id-status" required>
+
+        <label for="delivery-email-status">Your Email:</label>
+        <input type="email" id="delivery-email-status" required>
+
+        <label for="status-update">Status:</label>
+        <select id="status-update" required>
+            <option value="" disabled selected>Select Status</option>
+            <option value="Picked Up">Picked Up</option>
+            <option value="On the Way">On the Way</option>
+            <option value="Delivered">Delivered</option>
+        </select>
+
+        <button type="submit">Update Status</button>
+        <button type="button" id="clear-update-status" class="clear-btn">Clear</button>
+    </form>
+
+    <div id="updateStatusResult"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Admin Portal</p>
+    </footer>
+
+    <script src="static/del.js"></script>
+</body>
+</html>
