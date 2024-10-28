@@ -20,9 +20,10 @@ importlib-metadata==4.11.3
 itsdangerous==2.1.2
 Jinja2==3.1.2
 jmespath==1.0.1
-lxml==4.8.0
+lxml==4.9.3
 MarkupSafe==2.1.1
 paytmchecksum==1.7.0
+pip>=21.0
 pyasn1==0.5.1
 PyJWT==2.8.0
 python-dateutil==2.9.0.post0
@@ -32,6 +33,7 @@ replit==1.2.11
 requests==2.28.1
 rsa==4.7.2
 s3transfer==0.8.2
+setuptools>=57.0
 six==1.16.0
 soupsieve==2.3.2.post1
 typing_extensions==4.2.0
