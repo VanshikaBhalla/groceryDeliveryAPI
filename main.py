@@ -3,26 +3,26 @@ import jwt
 import csv
 import os.path
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from datetime import datetime, timedelta
 import random
 import string
+import hmac
+import hashlib
 
 app = Flask(__name__)
 SECRET_KEY = "hello17World13"
 
-RAZORPAY_KEY_ID = None
-RAZORPAY_SECRET_KEY = None
-razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_SECRET_KEY))
 TXT = "No Delivery Partner Assigned"
 
+RZP_CSV = 'rzp.csv'
 USERS_CSV = 'users.csv'
 PRODUCTS_CSV = 'products.csv'
 CART_CSV = 'cart.csv'
 ORDERS_CSV = 'orders.csv'
 PAYMENTS_CSV = 'payments.csv'
 roles = ["customer", "delivery_personnel"]
-categories = ['hygiene', 'beverage', 'snacks', 'electronic', 'fashion']
+categories = ['hygiene', 'beverage', 'snacks', 'electronic', 'fashion', 'other']
 
 
 def generate_product_id():
@@ -46,8 +46,31 @@ def read_from_csv(filename):
     return []
 
 
-@app.route('/users/register', methods=['POST'])
+x = read_from_csv(RZP_CSV)
+RAZORPAY_KEY_ID = x[1][0]
+RAZORPAY_SECRET_KEY = x[1][1]
+razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_SECRET_KEY))
+
+
+@app.route('/', methods=['GET'])
+def home():
+    return render_template("index.html")
+
+
+@app.route('/admin', methods=['GET'])
+def adm():
+    return render_template("admin.html")
+
+
+@app.route('/delivery', methods=['GET'])
+def der():
+    return render_template("delivery.html")
+
+
+@app.route('/users/register', methods=['POST', 'GET'])
 def register_user():
+    if request.method == 'GET':
+        return render_template("userregistration.html")
     data = request.json
     name = data.get('name')
     email = data.get('email')
@@ -63,7 +86,6 @@ def register_user():
     users = read_from_csv(USERS_CSV)
 
     for user in users:
-        # print(user)
         if user[1] == email or user[3] == phone:
             return jsonify({"error": "user already registered, try using a different email or phn number"}), 400
 
@@ -85,8 +107,10 @@ def generate_jwt(user_email):
     return token
 
 
-@app.route('/users/login', methods=['POST'])
+@app.route('/users/login', methods=['POST', 'GET'])
 def login_user():
+    if request.method == 'GET':
+        return render_template("login.html")
     data = request.json
     email = data.get('email')
     password = data.get('pwd')
@@ -96,16 +120,17 @@ def login_user():
     for user in users:
         if user[1] == email:  # user[1] is the email column
             hashed_password = user[2]  # user[2] is the hashed password column
+            role = user[4]
             if check_password_hash(hashed_password, password):
                 token = generate_jwt(email)  # Generate JWT token
-                return jsonify({"token": token}), 200
+                return jsonify({"token": token, "role": role}), 200
             else:
                 return jsonify({"error": "Invalid email or password!"}), 401
 
     return jsonify({"error": "User not found!"}), 404
 
 
-@app.route('/users/profile', methods=['GET'])
+@app.route('/users/profile', methods=['POST'])
 def fetch_profile():
     data = request.json
     em = data.get('email')
@@ -289,8 +314,7 @@ def display_products():
             "Rating": product[3],
             "InStock": product[5]
         })
-
-    return jsonify(grouped_products), 200
+    return render_template("products.html", grouped_products=grouped_products)
 
 
 @app.route('/products/<id_>', methods=['GET'])
@@ -313,7 +337,7 @@ def display_product(id_):
 
 @app.route('/products/search', methods=['GET'])
 def search_product():
-    q = request.args.get('key', '').lower()
+    q = request.args.get('key', '').strip().lower()
 
     if not q:
         return jsonify({"error": "query parameter needed!"}), 400
@@ -326,9 +350,10 @@ def search_product():
     res = []
 
     for p in products:
+        p__id = p[0].lower()
         p_name = p[1].lower()
         p_cat = p[4].lower()
-        if q in p_name or q in p_cat:
+        if q in p_name or q in p_cat or q in p__id:
             res.append({
                 "Product ID": p[0],
                 "Product Name": p[1],
@@ -458,8 +483,10 @@ def remove_from_cart(product_id):
     return jsonify({"message": "Product deleted from cart successfully!"}), 200
 
 
-@app.route('/orders/checkout', methods=['POST'])
+@app.route('/orders/checkout', methods=['POST','GET'])
 def place_order():
+    if request.method == "GET":
+        return render_template("checkout.html")
     email = request.args.get('email')
 
     if not email:
@@ -573,109 +600,67 @@ def init_payment():
         writer = csv.writer(file)
         writer.writerows(updated_orders)
 
-    # total_price = sum(float(o[4]) for o in order_) * 100  # razorpay accepts payments in paise
-    # payment_order = razorpay_client.order.create({
-    #     "amount": total_price,
-    #     "currency": "INR",
-    #     "receipt": f"receipt_{order_id}",
-    #     "payment_capture": 1
-    # })
-    #
-    # payment_data = [payment_order['id'], order_id, email, total_price / 100, "Pending"]
-    # write_to_csv(payment_data, PAYMENTS_CSV)
-    #
-    # return jsonify({
-    #     "msg": "Payment Successful!",
-    #     "payment_id": payment_order['id'],
-    #     "amount": total_price/100
-    # }), 201
+    total_price = sum(float(o[4]) for o in order_) * 100  # razorpay accepts payments in paise
+    payment_order = razorpay_client.order.create({
+        "amount": total_price,
+        "currency": "INR",
+        "receipt": f"receipt_{order_id}",
+        "payment_capture": 1
+    })
 
-    # ----------------mock implementation of payment since razorpay need 3-4 business days for verification------------------
-
-    total_price = sum(float(o[4]) for o in order_)
-
-    payment_token = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-    payment_link = f"https://mockpaymentgateway.com/pay/{payment_token}"
-    payment_data = [payment_token, order_id, email, total_price, "Pending"]
+    payment_data = [payment_order['id'], order_id, email, total_price / 100, "Pending"]
     write_to_csv(payment_data, PAYMENTS_CSV)
 
     return jsonify({
-        "message": "Payment initiated successfully!",
-        "payment_link": payment_link,
-        "amount": total_price
+        "msg": "Payment Successful!",
+        "payment_id": payment_order['id'],
+        "amount": total_price/100
     }), 201
+
+
+@app.route('/paynow', methods=['GET'])
+def pay_now():
+    orderID = request.args.get("orderid")
+    amount = request.args.get("amt")
+    data = {
+        "skey": RAZORPAY_KEY_ID,
+        "orderID": orderID,
+        "amt": amount
+    }
+    return render_template("test_pay.html", data=data)
 
 
 @app.route('/payments/verify', methods=['POST'])
 def verify_payment():
-    # payment_id = request.args.get('payment_id')
-    # razorpay_order_id = request.args.get('order_id')
-    # razorpay_signature = request.args.get('signature')
-    #
-    # if not all([payment_id, razorpay_order_id, razorpay_signature]):
-    #     return jsonify({"error": "Missing payment details!"}), 400
-    #
-    # try:
-    #     razorpay_client.utility.verify_payment_signature({
-    #         'razorpay_order_id': razorpay_order_id,
-    #         'razorpay_payment_id': payment_id,
-    #         'razorpay_signature': razorpay_signature
-    #     })
-    # except razorpay.errors.SignatureVerificationError:
-    #     return jsonify({"error": "Payment verification failed!"}), 400
-    #
-    # payments = read_from_csv(PAYMENTS_CSV)
-    # updated_payments = []
-    # payment_found = False
-    # p_id = None
-    #
-    # for payment in payments:
-    #     if payment[0] == razorpay_order_id:
-    #         p_id = payment[1]
-    #         payment_found = True
-    #         payment[4] = "Success"
-    #     updated_payments.append(payment)
-    #
-    # if not payment_found:
-    #     return jsonify({"error": "Payment not found!"}), 404
-    #
-    # with open(PAYMENTS_CSV, mode='w', newline='') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerows(updated_payments)
-    #
-    # orders = read_from_csv(ORDERS_CSV)
-    # updated_orders = []
-    # for order in orders:
-    #     if order[0] == payment[1]:
-    #         order[5] = "Paid"
-    #     updated_orders.append(order)
-    #
-    # with open('orders.csv', mode='w', newline='') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerows(updated_orders)
-    #
-    # return jsonify({"message": "Payment verified successfully!"}), 200
+    data = request.json
+    payment_id = data.get('payment_id')
+    razorpay_order_id = data.get('order_id')
+    data = f"{razorpay_order_id}|{payment_id}".encode('utf-8')
+    razorpay_signature = hmac.new(RAZORPAY_SECRET_KEY.encode('utf-8'), data, hashlib.sha256).hexdigest()
 
-    # ----------------mock implementation of payment since razorpay need 3-4 business days for verification------------------
+    if not all([payment_id, razorpay_order_id, razorpay_signature]):
+        return jsonify({"error": "Missing payment details!"}), 400
 
-    payment_token = request.args.get('payment_token')
-    payment_status = request.args.get('status').lower()
-    email = request.args.get('email')
-
-    if not all([payment_token, payment_status, email]):
-        return jsonify({"error": "Payment token, status, and user email are required!"}), 400
+    try:
+        razorpay_client.utility.verify_payment_signature({
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': payment_id,
+            'razorpay_signature': razorpay_signature
+        })
+    except razorpay.errors.SignatureVerificationError:
+        return jsonify({"error": "Payment verification failed!"}), 400
 
     payments = read_from_csv(PAYMENTS_CSV)
-    payment_found = False
     updated_payments = []
+    payment_found = False
     p_id = None
 
-    for p in payments:
-        if p[0] == payment_token and p[2] == email:
+    for payment in payments:
+        if payment[0] == razorpay_order_id:
+            p_id = payment[1]
             payment_found = True
-            p_id = p[1]
-            p[4] = payment_status
-        updated_payments.append(p)
+            payment[4] = "Success"
+        updated_payments.append(payment)
 
     if not payment_found:
         return jsonify({"error": "Payment not found!"}), 404
@@ -684,19 +669,18 @@ def verify_payment():
         writer = csv.writer(file)
         writer.writerows(updated_payments)
 
-    if payment_status == "success":
-        orders = read_from_csv(ORDERS_CSV)
-        updated_orders = []
-        for order in orders:
-            if order[0] == p_id:
-                order[5] = "Paid"
-            updated_orders.append(order)
+    orders = read_from_csv(ORDERS_CSV)
+    updated_orders = []
+    for order in orders:
+        if order[0] == payment[1]:
+            order[5] = "Paid"
+        updated_orders.append(order)
 
-        with open(ORDERS_CSV, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerows(updated_orders)
+    with open('orders.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(updated_orders)
 
-    return jsonify({"message": f"Payment verification: {payment_status}!"}), 200
+    return jsonify({"message": "Payment verified successfully!"}), 200
 
 
 @app.route('/payments/history', methods=['GET'])
@@ -742,7 +726,7 @@ def assign_delivery_partner(order_id):
     users = read_from_csv(USERS_CSV)
     delivery_found = False
     for user in users:
-        if user[1] == delivery_personnel_email and user[4] == 'delivery_personnel':  # Check delivery personnel role
+        if user[1] == delivery_personnel_email and user[4] == 'delivery_personnel':
             delivery_found = True
             break
 
@@ -774,7 +758,7 @@ def update_delivery_status():
     data = request.json
     order_id = data.get('order_id')
     delivery_personnel_email = data.get('delivery_personnel_email')
-    new_status = data.get('status')  # New status to update (e.g., "Picked Up," "On the Way," "Delivered")
+    new_status = data.get('status')  # New status to update ("Picked Up," "On the Way," "Delivered")
 
     if not order_id or not delivery_personnel_email or not new_status:
         return jsonify({"error": "Order ID, delivery personnel email, and status are required!"}), 400
@@ -868,7 +852,7 @@ def fetch_orders():
     orders = read_from_csv(ORDERS_CSV)
 
     if status:
-        filtered_orders = [order for order in orders if order[5] == status or order[8]==status]
+        filtered_orders = [order for order in orders if order[5] == status or order[8] == status]
         return jsonify(filtered_orders), 200
 
     return jsonify(orders), 200
