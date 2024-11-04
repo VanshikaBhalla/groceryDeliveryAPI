@@ -15,6 +15,8 @@ This project is an on-demand grocery delivery service designed to streamline the
 
 The application has been successfully deployed online using Render making it scalable according to demand. It integrates the Razorpay Payment Gateway with Test Mode API keys, providing a seamless payment experience.
 Check it out [here](https://grocerydeliveryapi.onrender.com) The page may take a few minutes to load, so thank you for your patience!
+![{3D4E3924-E28E-4836-9F78-2AE74DE22675}](https://github.com/user-attachments/assets/2a09b390-4c86-4177-9136-3b9b2f255960)
+
 
 ## Drawbacks and Challenges
 
